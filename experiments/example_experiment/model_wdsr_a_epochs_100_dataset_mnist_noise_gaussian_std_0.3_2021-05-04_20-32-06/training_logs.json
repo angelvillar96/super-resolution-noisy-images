@@ -1,0 +1,1 @@
+{"training_start": "2021-05-08_15-45-14", "last_modified": "2021-05-08_15-45-14", "loss": {"train": [], "valid": []}, "metrics": {"mae": {"train": [], "valid": []}, "mse": {"train": [], "valid": []}, "psnr": {"train": [], "valid": []}}}
