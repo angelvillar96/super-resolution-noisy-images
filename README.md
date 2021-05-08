@@ -4,9 +4,6 @@ This repository contains the code for reproducing the results of our ICASSP 2021
 
 [Paper](http://www.angelvillarcorrales.com/templates/others/Publications/Deep_Learning_Architectures_for_Super_Resolution_of_NoisyImages_ICASSP.pdf)
 
-#### Codebase Coming Soon!
-
-
 ## Contents
 
  * [1. Getting Started](#getting-started)
@@ -46,16 +43,11 @@ The following tree diagram displays the detailed directory structure of the proj
 
 ```
 denoising_in_superresolution
-├── eval_results/
-│   ├── eval_checkpoint_dicts/
-│   ├── eval_image_comparison/
-│   └── eval_metric_plots/
-|
 ├── experiments/
-│   ├── baseline/
-│   ├── median_filter_exps/
-│   ├── wiener_filter_exps/
-│   └── denoising_autoencoder_exps/
+|
+├── datasets/
+    |── NTIRE
+    |── ...
 |
 ├── src/
 │   |── data/
@@ -80,17 +72,12 @@ denoising_in_superresolution
 ```
 Now, we give a short overview of the different directories:
 
-- **eval_results/**: This directory contains the final evaluation results, comparing the performance of different methods, noise schemes and hyper-parameters.
-
-  - **eval_checkpoint_dicts/**: *JSON* files containing the comprehensive evaluations for different experiments.
-
-  - **eval_image_comparison/**: images comparing reconstruction quality of a degraded image using different methods.
-
-  - **eval_metric_plots/**: plots displaying the evaluation metrics (MSE, MAE and PSNR) as a function of the power of the noise.
-
 - **experiments/**: Directory containing the experiment folders. New experiments created are placed automatically under this directory. We provide pre-trained models for *pre-network* and *in-network* architectures using no denoiser, median filters, wiener filters and denoising autoencoders respectively.
 
-- **src/**: Code for the experiments. For a more detailed description of the code structure,  click [here](https://github.com/angelvillar96/denoising_in_superresolution/blob/denoising/src/README.md)
+- **datasets/**: This directory contains the dataset used for denoising and super-resolution. The codebase supports the following
+datasets: MNIST, SVHN and DIV2K (bicubic downsampling x2). MNIST and SVHN are automatically fetched. The images from the DIV2K dataset can be downloaded from the [official website](https://data.vision.ee.ethz.ch/cvl/DIV2K/)
+
+- **src/**: Code for the experiments. For a more detailed description of the code structure,  click [here](https://github.com/angelvillar96/super-resolution-noisy-images/blob/master/src/README.md)
 
   - **data/**: Methods for data loading and preprocessing.
 
@@ -137,14 +124,14 @@ Creating an experiment automatically generates a directory in the specified EXP_
 
 #### Example
 
-The following example creates in the directory */experiments/example_experiment* an experiment using a Wiener filter denoiser and the in-network architecture for the MNIST dataset. Next, the network architecture is exported to a *.txt*  file and a subset of corrupted images is saved under the */plots* directory.
+The following example creates in the directory */experiments/example_experiment* an experiment using a Wiener filter denoiser and the in-network architecture for the SVHN dataset. Next, the network architecture is exported to a *.txt*  file and a subset of corrupted images is saved under the */plots* directory.
 
 ```shell
-$ python 01_create_experiment.py -d example_experiment --dataset_name mnist \
+$ python 01_create_experiment.py -d example_experiment --dataset_name svhn \
     --denoiser wiener_filter --denoiser_type innetwork --noise gaussian \
     --std 0.3 --downscaling 2
-$ python aux_generate_network_txt.py -d example_experiment/denoiser_wiener_filter_type_innetwork_dataset_mnist_std_0.3_2020-05-11_09-44-51
-$ python aux_generate_subset_data.py -d example_experiment/denoiser_wiener_filter_type_innetwork_dataset_mnist_std_0.3_2020-05-11_09-44-51
+$ python aux_generate_network_txt.py -d example_experiment/denoiser_wiener_filter_type_innetwork_dataset_svhn_std_0.3_2020-05-11_09-44-51
+$ python aux_generate_subset_data.py -d example_experiment/denoiser_wiener_filter_type_innetwork_dataset_svhn_std_0.3_2020-05-11_09-44-51
 ```
 
 

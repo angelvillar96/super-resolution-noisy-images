@@ -220,6 +220,10 @@ class DIV2K():
         self.hr_data_path = os.path.join(dir_data, "NTIRE", f"DIV2K_{split}_HR")
         self.lr_data_path = os.path.join(dir_data, "NTIRE", f"DIV2K_{split}_LR_{method}", f"X{downscaling}")
 
+        if(not os.path.exists(self.hr_data_path) or not os.path.exists(self.lr_data_path)):
+            raise FileExistsError(f"""DIV2K dataset could not be found. It must be located in
+                                    {self.hr_data_path} and {self.lr_data_path}""")
+
         self.hr_images, self.lr_images = self._get_image_names()
 
         return
@@ -290,7 +294,6 @@ class DIV2K():
 
     def _get_image_names(self):
         """ Obtaining the names of the HR and LR images for online loading """
-
         names_hr = sorted(os.listdir(self.hr_data_path))
         names_lr = sorted(os.listdir(self.lr_data_path))
 
