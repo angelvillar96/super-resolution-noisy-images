@@ -21,7 +21,7 @@ This repository contains the code for reproducing the results of our ICASSP 2021
 To download the code, fork the repository or clone it using the following command:
 
 ```
-  git clone https://github.com/angelvillar96/denoising_in_superresolution.git
+  git clone https://github.com/angelvillar96/super-resolution-noisy-images.git
 ```
 
 ### Prerequisites
@@ -29,6 +29,8 @@ To download the code, fork the repository or clone it using the following comman
 To get the repository running, you will need several python packages, e.g., numpy, torch and matplotlib.
 
 You can install them all easily and avoiding dependency issues by installing the conda environment file included in the repository. To do so, run the following command from the Conda Command Window:
+
+**TODO:** Export and add environment
 
 ```shell
 $ conda env create -f environment.yml

@@ -131,7 +131,6 @@ class Data:
                     dataset.train()
                 else:
                     dataset.eval()
-                    batch_size = 1
                 if(savefig):
                     dataset.set_savefig(mode=True, generalization=generalization)
         else:

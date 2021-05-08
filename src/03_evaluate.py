@@ -46,8 +46,8 @@ class Evaluate:
         self.plots_path = os.path.join(self.exp_path, "plots")
 
         self.exp_data = utils.load_configuration_file(self.exp_path)
-        self.exp_data["training"]["batch_size"] = 1
-        self.exp_data["dataset"]["patches_per_img"] = 1
+        # self.exp_data["training"]["batch_size"] = 1
+        # self.exp_data["dataset"]["patches_per_img"] = 1
         self.train_logs = utils.load_train_logs(self.exp_path)
 
         self.checkpoint = checkpoint

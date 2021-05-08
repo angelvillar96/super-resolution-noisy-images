@@ -120,7 +120,7 @@ class EvaluatePatches:
 
         return
 
-    with torch.no_grad()
+    @torch.no_grad()
     def test_model(self):
         """
         Using the pretrained model to perform denoising and superresolution in the test

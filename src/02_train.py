@@ -105,7 +105,7 @@ class Trainer:
             print(f"########## Epoch {epoch+1}/{self.num_epochs} ##########")
             self.validation_epoch(epoch)
             self.train_epoch(epoch)
-            self.scheduler.step(self.valid_loss)
+            self.scheduler.step()
 
             # updating training_logs
             utils.update_logs(path=self.exp_path, plot_path=self.plots_path, train_loss=self.train_loss,
