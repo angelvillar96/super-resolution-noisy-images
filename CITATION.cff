@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: Villar-Corrales
+    given-names: Angel
+  - family-names: Schirrmacher
+    given-names: Franziska
+  - family-names: Riess
+    given-names: Christian
+title: "Deep learning architectural designs for super-resolution of noisy images"
+version: 1.0.1
+preferred-citation:
+  type: article
+  authors:
+  - family-names: Villar-Corrales
+    given-names: Angel
+  - family-names: Schirrmacher
+    given-names: Franziska
+  - family-names: Riess
+    given-names: Christian
+  journal: "IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP)"
+  title: "Deep learning architectural designs for super-resolution of noisy images"
+  year: 2021
