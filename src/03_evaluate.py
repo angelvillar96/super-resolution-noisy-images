@@ -143,7 +143,7 @@ class Evaluate:
             ssim_list.append(metric_vals["ssim"])
             ms_ssim_list.append(metric_vals["ms_ssim"])
 
-        loss = metrics.get_loss_stats(loss_list, message=f"Test Loss Stats")
+        loss = metrics.get_loss_stats(loss_list, message="Test Loss Stats")
         results = {
                 "loss": loss,
                 "mse": torch.mean(torch.stack(mse_list)),

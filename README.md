@@ -1,7 +1,9 @@
 # Deep Learning Architectural Designs for <br> Super-Resolution of Noisy Images
 
-This repository contains the code for reproducing the results of our ICASSP 2021 paper *Deep Learning Architectural Designs for Super-Resolution of Noisy Images*.
+<img src="/resources/teaser.png" alt="Architectural Designs"/>
 
+
+This repository contains the code for reproducing the results of our ICASSP 2021 paper *Deep Learning Architectural Designs for Super-Resolution of Noisy Images*.
 [Paper](http://www.angelvillarcorrales.com/templates/others/Publications/Deep_Learning_Architectures_for_Super_Resolution_of_NoisyImages_ICASSP.pdf)
 
 ## Contents
