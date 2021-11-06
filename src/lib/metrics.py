@@ -5,11 +5,8 @@ Denoising_in_superresolution/src/lib
 @author: Angel Villar-Corrales
 """
 
-import os
-import sys
-
-import numpy as np
 import torch
+from pytorch_msssim import ssim, ms_ssim, SSIM, MS_SSIM
 
 
 def get_loss_stats(loss_list, message=None):
@@ -120,6 +117,7 @@ def norm_img(img):
     """ """
     img = (img - 0.5) * 2
     return img
+
 
 def denorm_img(img):
     """ """

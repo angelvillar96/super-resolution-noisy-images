@@ -7,19 +7,13 @@ Denoising_in_superresolution/src
 
 import os
 from tqdm import tqdm
-
-import numpy as np
-from matplotlib import pyplot as plt
 import torch
 
-import data
-import models as models
 import lib.model_setup as model_setup
 import lib.utils as utils
 import lib.visualizations as visualizations
 import lib.metrics as metrics
 import lib.arguments as arguments
-from config import CONFIG
 
 
 class Trainer:
@@ -57,9 +51,7 @@ class Trainer:
         self.valid_mae = 1e18
         self.train_psnr = 1e18
         self.valid_psnr = 1e18
-
         return
-
 
     def load_dataset(self):
         """
@@ -68,9 +60,7 @@ class Trainer:
 
         self.dataset, self.train_loader, self.valid_loader, _,\
             self.num_channels = model_setup.load_dataset(self.exp_data)
-
         return
-
 
     def setup_training(self):
         """
@@ -87,9 +77,7 @@ class Trainer:
 
         # setting up model hyper-parameters
         self.optimizer, self.loss_function, self.scheduler = model_setup.hyperparameter_setup(self.exp_data, self.model)
-
         return
-
 
     def training_loop(self):
         """
@@ -119,17 +107,14 @@ class Trainer:
                 torch.save(self.model.state_dict(), save_path)
 
         # saving trained model
-        save_path = os.path.join(self.models_path, f"model_trained")
+        save_path = os.path.join(self.models_path, "model_trained")
         torch.save(self.model.state_dict(), save_path)
-
         return
-
 
     def train_epoch(self, epoch):
         """
         Computing training epoch
         """
-
         self.model.train()
         loss_list = []
         mae_list = []
@@ -167,7 +152,6 @@ class Trainer:
         self.train_mae = torch.mean(torch.stack(mae_list))
         self.train_mse = torch.mean(torch.stack(mse_list))
         self.train_psnr = torch.mean(torch.stack(psnr_list))
-
         return
 
     @torch.no_grad()
@@ -197,13 +181,13 @@ class Trainer:
 
             loss = self.loss_function(hr_imgs, recovered_images)
             loss_list.append(loss)
-            mae_list.append( metrics.mean_absoulte_error(hr_imgs, recovered_images) )
-            mse_list.append( metrics.mean_squared_error(hr_imgs, recovered_images) )
+            mae_list.append(metrics.mean_absoulte_error(hr_imgs, recovered_images))
+            mse_list.append(metrics.mean_squared_error(hr_imgs, recovered_images))
             cur_psnr = metrics.psnr(hr_imgs, recovered_images)
-            psnr_list.append( cur_psnr )
+            psnr_list.append(cur_psnr)
 
             # saving some images every 5 epochs to check learning progress
-            if(i < 3 and epoch%5 == 0 ):
+            if(i < 3 and epoch % 5 == 0 ):
                 if(self.dataset_name == "div2k"):
                     visualizations.display_images_one_row(
                             hr_imgs, lr_imgs, recovered_images,
@@ -219,7 +203,7 @@ class Trainer:
                         )
 
             # we only use 30 images for validation
-            if(i==30):
+            if(i == 30):
                 break
 
         loss = metrics.get_loss_stats(loss_list, message=f"Validation epoch {epoch+1}")
@@ -228,10 +212,7 @@ class Trainer:
         self.valid_mae = torch.mean(torch.stack(mae_list))
         self.valid_mse = torch.mean(torch.stack(mse_list))
         self.valid_psnr = torch.mean(torch.stack(psnr_list))
-
         return
-
-
 
 if __name__ == "__main__":
 

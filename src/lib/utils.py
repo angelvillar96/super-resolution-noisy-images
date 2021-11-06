@@ -7,6 +7,7 @@ Denoising_in_superresolution/src/lib
 """
 
 import os
+import random
 import sys
 import json
 import datetime
@@ -14,9 +15,7 @@ import datetime
 import numpy as np
 from matplotlib import pyplot as plt
 import torch
-
 sys.path.append("..")
-
 from config import CONFIG
 
 
@@ -355,7 +354,7 @@ def get_best_model_name(exp_path, autoencoder=False):
     with open(logs_path) as file:
         logs = json.load(file)
 
-    if(autoencoder==False):
+    if(autoencoder == False):
         valid_loss = logs["loss"]["valid"]
     else:
         valid_loss = logs["valid_loss"]
@@ -368,12 +367,12 @@ def get_best_model_name(exp_path, autoencoder=False):
     for model in models:
         if("model_" not in model and "autoencoder_" not in model):
             continue
-        if(model.split("_")[-1]=="trained"):
+        if(model.split("_")[-1] == "trained"):
             epoch = -1
         else:
             epoch = int(model.split("_")[-1])
         loss = valid_loss[epoch]
-        if(loss<min_loss):
+        if(loss < min_loss):
             min_loss = loss
             min_epoch = epoch
             model_name = model

@@ -9,20 +9,13 @@ Denoising_in_superresolution/src
 import os
 import json
 from tqdm import tqdm
-
-import numpy as np
-from matplotlib import pyplot as plt
 import torch
 
-import data
-import models as models
 import lib.model_setup as model_setup
 import lib.utils as utils
 import lib.visualizations as visualizations
 import lib.metrics as metrics
 import lib.arguments as arguments
-from config import CONFIG
-
 
 
 class AutoencoderTrainer:
@@ -57,9 +50,7 @@ class AutoencoderTrainer:
 
         self.train_loss = 1e18
         self.valid_loss = 1e18
-
         return
-
 
     def load_dataset(self):
         """
@@ -71,9 +62,7 @@ class AutoencoderTrainer:
         self.train_loader = train_loader
         self.valid_loader = valid_loader
         self.num_channels = num_channels
-
         return
-
 
     def setup_training(self):
         """
@@ -90,9 +79,7 @@ class AutoencoderTrainer:
 
         # setting up model hyper-parameters
         self.optimizer, self.loss_function, self.scheduler = model_setup.hyperparameter_setup(self.exp_data, self.model)
-
         return
-
 
     def training_loop(self):
         """
@@ -129,9 +116,7 @@ class AutoencoderTrainer:
         # saving trained model
         save_path = os.path.join(self.models_path, f"autoencoder_trained")
         torch.save(self.model.state_dict(), save_path)
-
         return
-
 
     def train_epoch(self, epoch):
         """
@@ -204,7 +189,6 @@ class AutoencoderTrainer:
         self.valid_loss = loss
 
         return
-
 
 
 if __name__ == "__main__":

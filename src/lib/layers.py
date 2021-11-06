@@ -39,9 +39,7 @@ class MedianPooling(nn.Module):
         self.stride = _pair(stride)
         self.padding = _quadruple(padding)
         self.same = same
-
         return
-
 
     def forward(self, x):
         """
@@ -67,7 +65,6 @@ class MedianPooling(nn.Module):
 
         return y
 
-
     def _pad_input(self, x):
         """
         Padding the input prior to the media operators given the parameters
@@ -80,14 +77,14 @@ class MedianPooling(nn.Module):
             elements to pad the input in each dimension (l, r, t, b)
         """
 
-        if(self.same == True):
+        if(self.same):
             _, _, row, col = x.shape
-            x_pad = ( col * (self.stride[0] - 1) + self.kernel[0] - self.stride[0])
+            x_pad = (col * (self.stride[0] - 1) + self.kernel[0] - self.stride[0])
             # x_pad = (self.kernel[0]-1)  # this assumes stride=1
             l_pad = x_pad//2
             r_pad = x_pad - l_pad
 
-            y_pad = ( row * (self.stride[1] - 1) + self.kernel[1] - self.stride[1])
+            y_pad = (row * (self.stride[1] - 1) + self.kernel[1] - self.stride[1])
             # y_pad = (self.kernel[1]-1)  # this assumes stride=1
             t_pad = y_pad//2
             b_pad = y_pad - t_pad
@@ -100,10 +97,10 @@ class MedianPooling(nn.Module):
         return pad_dim
 
 
-
 class WienerFilter(nn.Module):
     """
-    Custom implementation of the Wiene Filter as a Pytorch NN Module based on Scipy's implementation
+    Custom implementation of the Wiene Filter as a Pytorch NN Module
+    based on a frequency-domain implementation
     """
 
     def __init__(self, K=3, device=None):
@@ -115,13 +112,11 @@ class WienerFilter(nn.Module):
         K: integer or 2-d arraylke
             size of the wiener filter kernels
         """
-
         super(WienerFilter, self).__init__()
         self.kernel_size = _pair(K)
         self.device = device
 
         return
-
 
     def forward(self, img):
         """
@@ -137,7 +132,6 @@ class WienerFilter(nn.Module):
         denoised_img = torch.where(local_var < noise, local_mean, selection_img)
 
         return denoised_img
-
 
     def _estimate_params(self, img):
         """
@@ -156,18 +150,17 @@ class WienerFilter(nn.Module):
             ) / np.prod(list(weight.shape))
 
         # Estimate the local variance
-        local_var =  F.conv2d(
-                input=torch.pow(img,2),
+        local_var = F.conv2d(
+                input=torch.pow(img, 2),
                 weight=weight,
                 padding=pad_dim
             ) / np.prod(list(weight.shape)) - torch.pow(local_mean,2)
 
         # noise power
         noise = torch.mean(local_var.view(local_var.shape[0], local_var.shape[1], -1), axis=-1)
-        noise = noise[:,np.newaxis, np.newaxis]
+        noise = noise[:, np.newaxis, np.newaxis]
 
         return local_mean, local_var, noise
-
 
     def _pad_input(self, x):
         """

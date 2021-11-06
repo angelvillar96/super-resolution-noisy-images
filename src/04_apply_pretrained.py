@@ -7,22 +7,13 @@ Denoising_in_superresolution/src
 """
 
 import os
-import json
-from argparse import Namespace
-from tqdm import tqdm
-
-import numpy as np
-from matplotlib import pyplot as plt
 import torch
 
-import models as models
-import data
 import lib.utils as utils
 import lib.visualizations as visualizations
 import lib.metrics as metrics
 import lib.arguments as arguments
 import lib.model_setup as model_setup
-from config import CONFIG
 
 
 def load_pretrained_model(model_path, exp_data, exp_path):
@@ -74,7 +65,7 @@ def main():
     model_name = f"model_epoch_{epoch}"
     model_path = os.path.join(model_directory, model_name)
     plots_path = os.path.join(exp_directory, "plots", "test")
-    utils.create_directory(plots_path )
+    utils.create_directory(plots_path)
 
     # if model given epoch does not exist, we load the model with the best validation loss
     if(not os.path.exists(model_path)):
@@ -124,7 +115,6 @@ def main():
                         hr_imgs, lr_imgs, recovered_images,
                         savepath=os.path.join(plots_path, f"test_figures_{num_imgs}"),
                         dataset_name=dataset_name)
-
 
     test_mae = torch.stack(test_mae).mean()
     test_mse = torch.stack(test_mse).mean()

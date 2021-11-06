@@ -6,8 +6,6 @@ Denoising_in_superresolution/src/lib
 @author: Angel Villar-Corrales
 """
 
-import os
-
 import torch
 import torch.nn as nn
 
@@ -67,7 +65,7 @@ def introduce_denoising(model, exp_data, exp_path):
     # for the innetwork case, we add the denoiser at the very beginning of the skip
     # connection, before the convolutional layer
     elif(denoising_position == "innetwork"):
-        skip_layers =  list(model.skip)
+        skip_layers = list(model.skip)
         model.skip = nn.Sequential()
         model.skip.add_module(f"{denoising_method}", denoiser)
         for i, layer in enumerate(skip_layers):

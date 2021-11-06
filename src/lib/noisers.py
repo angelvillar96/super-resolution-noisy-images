@@ -6,8 +6,6 @@ Denoising_in_superresolution/src/lib
 """
 
 import numpy as np
-import scipy.misc as misc
-from PIL import Image
 from skimage.transform import rescale
 from skimage.filters import gaussian
 
@@ -31,7 +29,6 @@ class Noiser:
         self.noise = noise
         self.std = std
         return
-
 
     def __call__(self, img):
         """
@@ -59,19 +56,19 @@ class Noiser:
 
         elif(self.noise == "salt_pepper"):
             probs = np.random.uniform(low=0, high=1, size=size[0]*size[1])
-            salt = np.where(probs>(1-self.std/2))[0]
-            pepper = np.where(probs<self.std/2)[0]
+            salt = np.where(probs > (1-self.std/2))[0]
+            pepper = np.where(probs < self.std/2)[0]
             salt = self._to_matrix(salt, shape=size[:-1])
             pepper = self._to_matrix(pepper, shape=size[:-1])
             corrupted_img = np.copy(img)
-            corrupted_img[salt[:,0],salt[:,1],:] = 1
-            corrupted_img[pepper[:,0],pepper[:,1],:] = 0
+            corrupted_img[salt[:, 0], salt[:, 1], :] = 1
+            corrupted_img[pepper[:, 0], pepper[:, 1], :] = 0
 
         elif(self.noise == "poisson"):
             noise = np.random.poisson(lam=self.std, size=size)
             corrupted_img = img + noise
 
-        elif(self.noise =="speckle"):
+        elif(self.noise == "speckle"):
             noise = np.random.normal(loc=0, scale=self.std, size=size)
             corrupted_img = img + img * noise
 
@@ -82,9 +79,7 @@ class Noiser:
 
         # converting the corrupted image to range [-1,1]
         corrupted_img = self._transform_values(corrupted_img)
-
         return corrupted_img
-
 
     def _to_matrix(self, idx, shape):
         """
@@ -102,22 +97,17 @@ class Noiser:
         matrix_idx: numpy array
             input indices converted to desired matrix shape
         """
-
         matrix_idx = np.zeros((idx.shape[0], 2))
         matrix_idx[:, 0] = idx % shape[0]
         matrix_idx[:, 1] = idx // shape[1]
-
         return matrix_idx.astype(int)
-
 
     def _transform_values(self, img, mean=0.5, var=0.5):
         """
         Transforming the noise values to be in the range [-1,1]
         """
-
         img = np.clip(img, 0, 1)
         img = (img - mean) / var
-
         return img
 
 
@@ -137,7 +127,6 @@ class Blur:
         """
         self.downscaling = downscaling
         return
-
 
     def __call__(self, hr_img):
         """

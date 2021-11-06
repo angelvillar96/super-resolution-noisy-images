@@ -8,20 +8,13 @@ Denoising_in_superresolution/src
 
 import os
 import json
-from argparse import Namespace
 from tqdm import tqdm
-
-import numpy as np
-from matplotlib import pyplot as plt
 import torch
 
-import models as models
-import data
 import lib.utils as utils
 import lib.metrics as metrics
 import lib.arguments as arguments
 import lib.model_setup as model_setup
-from config import CONFIG
 
 
 class Evaluate:
@@ -51,9 +44,7 @@ class Evaluate:
         self.train_logs = utils.load_train_logs(self.exp_path)
 
         self.checkpoint = checkpoint
-
         return
-
 
     def load_dataset(self):
         """
@@ -61,9 +52,7 @@ class Evaluate:
         """
 
         self.dataset, _, _, self.test_loader, self.num_channels = model_setup.load_dataset(self.exp_data)
-
         return
-
 
     def load_generalization_dataset(self, noise, std):
         """
@@ -79,16 +68,13 @@ class Evaluate:
 
         self.dataset,self.test_loader,\
             self.num_channels = model_setup.load_generalization_dataset(exp_data=self.exp_data, noise=noise, std=std)
-
         return
-
 
     def load_model(self):
         """
         Creating a model and loading the pretrained network parameters from the saved
         state dictionary. Setting the model to use a GPU
         """
-
         # getting model name given checkpoint
         if(self.checkpoint<0):
             model_name = "model_trained"
@@ -114,7 +100,6 @@ class Evaluate:
 
         # setting up model hyper-parameters
         self.optimizer, self.loss_function, self.scheduler = model_setup.hyperparameter_setup(self.exp_data, self.model)
-
         return
 
     @torch.no_grad()
@@ -155,9 +140,9 @@ class Evaluate:
 
             loss = self.loss_function(hr_imgs, recovered_images)
             loss_list.append(loss)
-            mae_list.append( metrics.mean_absoulte_error(hr_imgs, recovered_images) )
-            mse_list.append( metrics.mean_squared_error(hr_imgs, recovered_images) )
-            psnr_list.append( metrics.psnr(hr_imgs, recovered_images) )
+            mae_list.append(metrics.mean_absoulte_error(hr_imgs, recovered_images))
+            mse_list.append(metrics.mean_squared_error(hr_imgs, recovered_images))
+            psnr_list.append(metrics.psnr(hr_imgs, recovered_images))
 
         loss = metrics.get_loss_stats(loss_list, message=f"Test Loss Stats")
         test_loss = loss
@@ -174,10 +159,9 @@ if __name__ == "__main__":
 
     exp_directory, noise, std = arguments.get_directory_argument(generalization=True)
     checkpoint = 90
-
     evaluator = Evaluate(exp_path=exp_directory, checkpoint=checkpoint)
 
-    if(noise==""):
+    if(noise == ""):
         evaluator.load_dataset()
     else:
         evaluator.load_generalization_dataset(noise=noise, std=std)
@@ -191,7 +175,7 @@ if __name__ == "__main__":
     print(f"Test PSNR: {test_psnr}")
 
     # creating/saving generalization results
-    if(noise!=""):
+    if(noise != ""):
         gen_logs_path = os.path.join(exp_directory, "generalization_logs.json")
         if(not os.path.exists(gen_logs_path)):
             gen_logs = utils.create_generalization_logs(exp_directory)

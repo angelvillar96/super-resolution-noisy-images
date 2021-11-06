@@ -2,3 +2,5 @@
 __pycache__
 datasets/*
 .ftpconfig
+.gitignore
+experiments/aux_exps
