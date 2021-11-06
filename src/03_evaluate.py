@@ -95,7 +95,7 @@ class Evaluate:
 
         # initializing the model and loading the state dicitionary
         model = model_setup.setup_model(exp_data=self.exp_data, exp_path=self.exp_path)
-        model.load_state_dict(torch.load(path_to_model))
+        model.load_state_dict(torch.load(path_to_model, map_location=self.device))
         self.model = model.to(self.device)
 
         # setting up model hyper-parameters
@@ -110,14 +110,8 @@ class Evaluate:
 
         Returns:
         --------
-        test_loss: float
-            loss computed on the test set
-        test_mae: float
-            Mean Absolute Error computed on the test set
-        test_mse: float
-            Mean Squared Error computed on the test set
-        test_psnr: float
-            Peak signal-to-noise error computed on the test set
+        results: dictionary
+            dict containing the average result for each of the metrics: loss, mse, mae, psnr, ssim, ms_ssim
         """
 
         self.model.eval()
@@ -125,6 +119,8 @@ class Evaluate:
         mae_list = []
         mse_list = []
         psnr_list = []
+        ssim_list = []
+        ms_ssim_list = []
 
         for _, (hr_imgs, lr_imgs, labels) in enumerate(tqdm(self.test_loader)):
 
@@ -140,17 +136,23 @@ class Evaluate:
 
             loss = self.loss_function(hr_imgs, recovered_images)
             loss_list.append(loss)
-            mae_list.append(metrics.mean_absoulte_error(hr_imgs, recovered_images))
-            mse_list.append(metrics.mean_squared_error(hr_imgs, recovered_images))
-            psnr_list.append(metrics.psnr(hr_imgs, recovered_images))
+            metric_vals = metrics.compute_metrics(original_img=hr_imgs, resoluted_img=recovered_images)
+            mae_list.append(metric_vals["mae"])
+            mse_list.append(metric_vals["mae"])
+            psnr_list.append(metric_vals["psnr"])
+            ssim_list.append(metric_vals["ssim"])
+            ms_ssim_list.append(metric_vals["ms_ssim"])
 
         loss = metrics.get_loss_stats(loss_list, message=f"Test Loss Stats")
-        test_loss = loss
-        test_mae = torch.mean(torch.stack(mae_list))
-        test_mse = torch.mean(torch.stack(mse_list))
-        test_psnr = torch.mean(torch.stack(psnr_list))
-
-        return test_loss, test_mae, test_mse, test_psnr
+        results = {
+                "loss": loss,
+                "mse": torch.mean(torch.stack(mse_list)),
+                "mae": torch.mean(torch.stack(mae_list)),
+                "psnr": torch.mean(torch.stack(psnr_list)),
+                "ssim": torch.mean(torch.stack(ssim_list)),
+                "sm_ssim": torch.mean(torch.stack(ms_ssim_list)),
+            }
+        return results
 
 
 if __name__ == "__main__":
@@ -167,12 +169,14 @@ if __name__ == "__main__":
         evaluator.load_generalization_dataset(noise=noise, std=std)
 
     evaluator.load_model()
-    test_loss, test_mae, test_mse, test_psnr = evaluator.test_model()
+    results = evaluator.test_model()
 
-    print(f"Test Loss: {test_loss}")
-    print(f"Test MAE: {test_mae}")
-    print(f"Test MSE: {test_mse}")
-    print(f"Test PSNR: {test_psnr}")
+    print(f"Test Loss: {results['loss']}")
+    print(f"Test MAE: {results['mae']}")
+    print(f"Test MSE: {results['mse']}")
+    print(f"Test PSNR: {results['psnr']}")
+    print(f"Test SSIM: {results['ssim']}")
+    print(f"Test SM-SSIM: {results['sm_ssim']}")
 
     # creating/saving generalization results
     if(noise != ""):
@@ -183,9 +187,11 @@ if __name__ == "__main__":
             gen_logs = utils.load_generalization_logs(exp_directory)
         exp_name = f"noise={noise}__std={std}"
         gen_logs[exp_name] = {}
-        gen_logs[exp_name]["MAE"] = float(test_mae)
-        gen_logs[exp_name]["MSE"] = float(test_mse)
-        gen_logs[exp_name]["PSNR"] = float(test_psnr)
+        gen_logs[exp_name]["MAE"] = float(results['mae'])
+        gen_logs[exp_name]["MSE"] = float(results['mse'])
+        gen_logs[exp_name]["PSNR"] = float(results['psnr'])
+        gen_logs[exp_name]["SSIM"] = float(results['ssim'])
+        gen_logs[exp_name]["SM-SSIM"] = float(results['sm_ssim'])
 
         with open(gen_logs_path, "w") as file:
             json.dump(gen_logs, file)

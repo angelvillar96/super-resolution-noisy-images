@@ -234,7 +234,8 @@ def load_pretrained_autoencoder(exp_path, exp_data):
     autoencoder = setup_autoencoder(exp_data, dataset=None)
 
     # loading the parameters and freezing the weights
-    autoencoder.load_state_dict(torch.load(path_to_model))
+    device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+    autoencoder.load_state_dict(torch.load(path_to_model, map_location=device))
     for param in autoencoder.parameters():
         param.requires_grad = False
 

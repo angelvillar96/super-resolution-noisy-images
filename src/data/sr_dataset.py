@@ -119,9 +119,9 @@ class SrDataset(Dataset):
         """
 
         if self.dataset_name == "div2k":  # for DIV2K we sample image patches
-            print(self.hr_images[idx])
+            # print(self.hr_images[idx])
             hr_img, lr_img_ = self.get_patches(idx)
-            hr_img, lr_img_ = hr_img/255, lr_img_/255
+            hr_img, lr_img_ = hr_img / 255, lr_img_ / 255
             hr_img = (hr_img - 0.5) / 0.5
             cur_label = 0
         else:  # for MNIST or SVHN we sample the full image

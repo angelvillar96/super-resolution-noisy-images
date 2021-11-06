@@ -6,7 +6,8 @@ Denoising_in_superresolution/src/lib
 """
 
 import torch
-from pytorch_msssim import ssim, ms_ssim, SSIM, MS_SSIM
+from pytorch_msssim import ssim as _ssim
+from pytorch_msssim import ms_ssim as _ms_ssim
 
 
 def get_loss_stats(loss_list, message=None):
@@ -21,7 +22,7 @@ def get_loss_stats(loss_list, message=None):
         Additional message to display
     """
 
-    if(len(loss_list)==0):
+    if(len(loss_list) == 0):
         return
 
     loss_np = torch.stack(loss_list)
@@ -37,6 +38,38 @@ def get_loss_stats(loss_list, message=None):
     return avg_loss
 
 
+def compute_metrics(original_img, resoluted_img):
+    """
+    Computing differnt evaluation metrics between original and resoluted images.
+    Computes MSE, MAE, PSNR, SSIM & MS_SSIM
+
+    Args:
+    -----
+    original_img: batch of torch Tensors
+        batch containing the input images
+    resoluted_img: batch of torch Tensors
+        batch containing the tensors at the output of the network
+
+    Returns:
+    --------
+    metrics: dictionary
+        dict with the mean value for each metric
+    """
+    mse_val = mean_squared_error(original_img, resoluted_img)
+    mae_val = mean_absoulte_error(original_img, resoluted_img)
+    psnr_val = psnr(original_img, resoluted_img)
+    ssim_val = ssim(original_img, resoluted_img)
+    msssim_val = ms_ssim(original_img, resoluted_img)
+    metrics = {
+            "mse": mse_val,
+            "mae": mae_val,
+            "psnr": psnr_val,
+            "ssim": ssim_val,
+            "ms_ssim": msssim_val
+        }
+    return metrics
+
+
 def mean_squared_error(original_img, resoluted_img):
     """
     Computing the mean squared error between original and resoluted images
@@ -49,6 +82,7 @@ def mean_squared_error(original_img, resoluted_img):
         batch containing the tensors at the output of the network
 
     Returns:
+    --------
     mse: float
         mean squared error of the image
     """
@@ -71,6 +105,7 @@ def mean_absoulte_error(original_img, resoluted_img):
         batch containing the tensors at the output of the network
 
     Returns:
+    --------
     mae: float
         mean absolute error of the image
     """
@@ -86,7 +121,7 @@ def psnr(original_img, resoluted_img):
     """
     Computing the peak signal to noise ration between original and resoluted images
 
-    Args:x
+    Args:
     -----
     original_img: batch of torch Tensors
         batch containing the input images
@@ -94,6 +129,7 @@ def psnr(original_img, resoluted_img):
         batch containing the tensors at the output of the network
 
     Returns:
+    --------
     psnr: float
         peak to signal noise ratio (in dB)
     """
@@ -111,6 +147,49 @@ def psnr(original_img, resoluted_img):
     psnr = psnr.mean()
 
     return psnr
+
+
+def ssim(original_img, resoluted_img):
+    """
+    Computing the Structural Similarity (SSIM) between original and resoluted images
+    See https://github.com/VainF/pytorch-msssim
+
+    Args:
+    -----
+    original_img: batch of torch Tensors
+        batch containing the input images
+    resoluted_img: batch of torch Tensors
+        batch containing the tensors at the output of the network
+
+    Returns:
+    --------
+    ssim_val: float
+        mean structural similarity value
+    """
+    ssim_vals = _ssim(original_img, resoluted_img, data_range=255)
+    ssim_val = ssim_vals.mean()
+    return ssim_val
+
+
+def ms_ssim(original_img, resoluted_img):
+    """
+    Computing the Multi-Scale Structural Similarity (MS-SSIM) between original and resoluted images
+    See https://github.com/VainF/pytorch-msssim
+    Args:
+    -----
+    original_img: batch of torch Tensors
+        batch containing the input images
+    resoluted_img: batch of torch Tensors
+        batch containing the tensors at the output of the network
+
+    Returns:
+    --------
+    msssim_val: float
+        mean multi-scale structural similarity value
+    """
+    msssim_vals = _ms_ssim(original_img, resoluted_img, data_range=255)
+    msssim_val = msssim_vals.mean()
+    return msssim_val
 
 
 def norm_img(img):

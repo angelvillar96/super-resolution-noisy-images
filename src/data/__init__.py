@@ -9,7 +9,7 @@ Denoising_in_superresolution/src/data
 import numpy as np
 from torch.utils.data import DataLoader, sampler
 
-from .sr_dataset import SrDataset, DIV2K
+from .sr_dataset import SrDataset
 import lib.augmentations as augment
 
 
@@ -44,7 +44,7 @@ class Data:
     """
 
     def __init__(self, dataset_name, config, train=True, test=False, noise="", std=0,
-                downscaling=1, valid_size=0.2, augmentations={}, noisy=False, patches_per_img=1):
+                 downscaling=1, valid_size=0.2, augmentations={}, noisy=False, patches_per_img=1):
         """
         Initializer of the data object
         """
@@ -91,9 +91,7 @@ class Data:
                                       patches_per_img=patches_per_img)
         else:
             self.test_set = None
-
         return
-
 
     def get_data_loader(self, batch_size, set="train", shuffle=False, test_patch=False,
                         generalization=False, savefig=False):
@@ -120,11 +118,11 @@ class Data:
             torch data loader to iterate the given set
         """
 
-        if(set=="train"):
+        if(set == "train"):
             dataset = self.train_set
             if(dataset is not None):
                 dataset.train()
-        elif(set=="test"):
+        elif(set == "test"):
             dataset = self.test_set
             if(dataset is not None):
                 if(test_patch):
@@ -145,7 +143,6 @@ class Data:
 
         return data_loader
 
-
     def get_train_validation_loaders(self, batch_size, test_patch=False):
         """
         Creates a train/validation split of the training set and returns the data loaders for both
@@ -163,7 +160,7 @@ class Data:
             torch data loader to iterate over the validation set
         """
 
-        if(self.train == False):
+        if(not self.train):
             return None, None
 
         # special case fo DIV2K dataset
@@ -194,13 +191,11 @@ class Data:
         valid_sampler = sampler.SubsetRandomSampler(valid_idx)
 
         # creating data loaders
-        train_loader = DataLoader(self.train_set,
-                    batch_size=batch_size, sampler=train_sampler,
-                    num_workers=self.config["num_workers"])
+        train_loader = DataLoader(self.train_set, batch_size=batch_size, sampler=train_sampler,
+                                  num_workers=self.config["num_workers"])
 
-        valid_loader = DataLoader(self.train_set,
-                        batch_size=batch_size, sampler=valid_sampler,
-                        num_workers=self.config["num_workers"])
+        valid_loader = DataLoader(self.train_set, batch_size=batch_size, sampler=valid_sampler,
+                                  num_workers=self.config["num_workers"])
 
         self.train_examples = len(train_idx)
         self.valid_examples = len(valid_idx)

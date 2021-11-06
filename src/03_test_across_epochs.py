@@ -40,6 +40,7 @@ def main():
     train_logs["evaluation"]["mse"] = []
     train_logs["evaluation"]["psnr"] = []
     train_logs["evaluation"]["ssim"] = []
+    train_logs["evaluation"]["sm_ssim"] = []
 
     # iterating all checpoints testing them
     for i, model in enumerate(model_list):
@@ -61,14 +62,16 @@ def main():
             evaluator = Evaluator.Evaluate(exp_path=exp_directory, checkpoint=epoch)
         evaluator.load_dataset()
         evaluator.load_model()
-        test_loss, test_mae, test_mse, test_psnr = evaluator.test_model()
+        results = evaluator.test_model()
 
         epoch = 100 if(epoch == -1) else epoch
         train_logs["evaluation"]["epochs"].append(int(epoch))
-        train_logs["evaluation"]["loss"].append(float(test_loss))
-        train_logs["evaluation"]["mae"].append(float(test_mae))
-        train_logs["evaluation"]["mse"].append(float(test_mse))
-        train_logs["evaluation"]["psnr"].append(float(test_psnr))
+        train_logs["evaluation"]["loss"].append(float(results['loss']))
+        train_logs["evaluation"]["mae"].append(float(results['mae']))
+        train_logs["evaluation"]["mse"].append(float(results['mse']))
+        train_logs["evaluation"]["psnr"].append(float(results['psnr']))
+        train_logs["evaluation"]["ssim"].append(float(results['ssim']))
+        train_logs["evaluation"]["sm_ssim"].append(float(results['sm_ssim']))
 
         train_logs_file = os.path.join(exp_directory, "training_logs.json")
         with open(train_logs_file, "w") as file:
