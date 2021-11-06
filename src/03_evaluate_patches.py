@@ -46,6 +46,7 @@ class EvaluatePatches:
         self.train_logs = utils.load_train_logs(self.exp_path)
 
         self.checkpoint = checkpoint
+        utils.set_random_seed()
         return
 
     def load_dataset(self):
@@ -130,6 +131,8 @@ class EvaluatePatches:
         mae_list = []
         mse_list = []
         psnr_list = []
+        ssim_list = []
+        ms_ssim_list = []
 
         for i, (hr_imgs, lr_imgs, labels) in enumerate(tqdm(self.test_loader)):
 
@@ -145,17 +148,23 @@ class EvaluatePatches:
 
             loss = self.loss_function(hr_imgs, recovered_images)
             loss_list.append(loss)
-            mae_list.append(metrics.mean_absoulte_error(hr_imgs, recovered_images))
-            mse_list.append(metrics.mean_squared_error(hr_imgs, recovered_images))
-            psnr_list.append(metrics.psnr(hr_imgs, recovered_images))
+            metric_vals = metrics.compute_metrics(original_img=hr_imgs, resoluted_img=recovered_images)
+            mae_list.append(metric_vals["mae"])
+            mse_list.append(metric_vals["mae"])
+            psnr_list.append(metric_vals["psnr"])
+            ssim_list.append(metric_vals["ssim"])
+            ms_ssim_list.append(metric_vals["ms_ssim"])
 
-        loss = metrics.get_loss_stats(loss_list, message=f"Test Loss Stats")
-        test_loss = loss
-        test_mae = torch.mean(torch.stack(mae_list))
-        test_mse = torch.mean(torch.stack(mse_list))
-        test_psnr = torch.mean(torch.stack(psnr_list))
-
-        return test_loss, test_mae, test_mse, test_psnr
+        loss = metrics.get_loss_stats(loss_list, message="Test Loss Stats")
+        results = {
+                "loss": loss,
+                "mse": torch.mean(torch.stack(mse_list)),
+                "mae": torch.mean(torch.stack(mae_list)),
+                "psnr": torch.mean(torch.stack(psnr_list)),
+                "ssim": torch.mean(torch.stack(ssim_list)),
+                "sm_ssim": torch.mean(torch.stack(ms_ssim_list)),
+            }
+        return results
 
 
 if __name__ == "__main__":

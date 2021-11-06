@@ -1,6 +1,8 @@
 
+.gitignore
+.ftpconfig
 __pycache__
 datasets/*
-.ftpconfig
-.gitignore
+*.sh
 experiments/aux_exps
+aux_make_tables.py

@@ -55,11 +55,17 @@ def compute_metrics(original_img, resoluted_img):
     metrics: dictionary
         dict with the mean value for each metric
     """
+    assert original_img.min() >= 0 and original_img.max() <= 1
+    original_img = original_img.clamp(0, 1)
+    resoluted_img = resoluted_img.clamp(0, 1)
     mse_val = mean_squared_error(original_img, resoluted_img)
     mae_val = mean_absoulte_error(original_img, resoluted_img)
     psnr_val = psnr(original_img, resoluted_img)
     ssim_val = ssim(original_img, resoluted_img)
-    msssim_val = ms_ssim(original_img, resoluted_img)
+    if(original_img.shape[-2] > 160 and original_img.shape[-1] > 160):
+        msssim_val = ms_ssim(original_img, resoluted_img)
+    else:
+        msssim_val = torch.Tensor([-1])
     metrics = {
             "mse": mse_val,
             "mae": mae_val,
@@ -166,7 +172,7 @@ def ssim(original_img, resoluted_img):
     ssim_val: float
         mean structural similarity value
     """
-    ssim_vals = _ssim(original_img, resoluted_img, data_range=255)
+    ssim_vals = _ssim(original_img, resoluted_img, data_range=1.0)
     ssim_val = ssim_vals.mean()
     return ssim_val
 
@@ -187,7 +193,7 @@ def ms_ssim(original_img, resoluted_img):
     msssim_val: float
         mean multi-scale structural similarity value
     """
-    msssim_vals = _ms_ssim(original_img, resoluted_img, data_range=255)
+    msssim_vals = _ms_ssim(original_img, resoluted_img, data_range=1.0)
     msssim_val = msssim_vals.mean()
     return msssim_val
 

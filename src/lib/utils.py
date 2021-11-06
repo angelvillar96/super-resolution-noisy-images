@@ -197,6 +197,12 @@ def create_train_logs(path):
     train_logs["metrics"]["psnr"] = {}
     train_logs["metrics"]["psnr"]["train"] = []
     train_logs["metrics"]["psnr"]["valid"] = []
+    train_logs["metrics"]["ssim"] = {}
+    train_logs["metrics"]["ssim"]["train"] = []
+    train_logs["metrics"]["ssim"]["valid"] = []
+    train_logs["metrics"]["ms_ssim"] = {}
+    train_logs["metrics"]["ms_ssim"]["train"] = []
+    train_logs["metrics"]["ms_ssim"]["valid"] = []
 
     # creating file and saving it in the experiment folder
     train_logs_file = os.path.join(path, "training_logs.json")
@@ -214,10 +220,11 @@ def load_train_logs(path):
     train_logs_file = os.path.join(path, "training_logs.json")
 
     if(not os.path.exists(train_logs_file)):
-        return None
-
-    with open(train_logs_file) as file:
-        train_logs = json.load(file)
+        print(f"WARNING! train logs file {train_logs_file} does not exist.\nCreating new one...")
+        train_logs = create_train_logs(path)
+    else:
+        with open(train_logs_file) as file:
+            train_logs = json.load(file)
 
     return train_logs
 

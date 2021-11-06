@@ -21,7 +21,7 @@ def main():
     Main logic for testing the different checkpoints saved during training
     """
 
-    patches = False
+    patches = True
 
     # loading exp_directory and reading all checkpoints
     exp_directory = arguments.get_directory_argument()
@@ -44,7 +44,7 @@ def main():
 
     # iterating all checpoints testing them
     for i, model in enumerate(model_list):
-
+        utils.set_random_seed()
         print(f"Processing: {model}")
         if("model_") not in model:
             continue
@@ -60,9 +60,15 @@ def main():
             evaluator = EvaluatorPatches.EvaluatePatches(exp_path=exp_directory, checkpoint=epoch)
         else:
             evaluator = Evaluator.Evaluate(exp_path=exp_directory, checkpoint=epoch)
-        evaluator.load_dataset()
-        evaluator.load_model()
-        results = evaluator.test_model()
+        try:
+            evaluator.load_dataset()
+            evaluator.load_model()
+            results = evaluator.test_model()
+        except:
+            print(f"Error procesing {model}...")
+            continue
+
+        print(results)
 
         epoch = 100 if(epoch == -1) else epoch
         train_logs["evaluation"]["epochs"].append(int(epoch))

@@ -296,7 +296,8 @@ def hyperparameter_setup(exp_data, model):
         downscaling = exp_data["corruption"]["downsampling"]["factor"]
         root_path = os.path.dirname(os.getcwd())
         weights_path = os.path.join( root_path, CONFIG["paths"]["weights_path"], f"wdsr_x{downscaling}.pth")
-        checkpoint = torch.load(weights_path)
+        device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+        checkpoint = torch.load(weights_path, map_location=device)
         optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
         scheduler.load_state_dict(checkpoint['lr_scheduler_state_dict'])
 

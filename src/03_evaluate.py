@@ -39,11 +39,12 @@ class Evaluate:
         self.plots_path = os.path.join(self.exp_path, "plots")
 
         self.exp_data = utils.load_configuration_file(self.exp_path)
-        # self.exp_data["training"]["batch_size"] = 1
-        # self.exp_data["dataset"]["patches_per_img"] = 1
+        self.exp_data["training"]["batch_size"] = 1
+        self.exp_data["dataset"]["patches_per_img"] = 1
         self.train_logs = utils.load_train_logs(self.exp_path)
 
         self.checkpoint = checkpoint
+        utils.set_random_seed()
         return
 
     def load_dataset(self):
@@ -66,8 +67,8 @@ class Evaluate:
             power of the corruption noise
         """
 
-        self.dataset,self.test_loader,\
-            self.num_channels = model_setup.load_generalization_dataset(exp_data=self.exp_data, noise=noise, std=std)
+        self.dataset, self.test_loader, self.num_channels = \
+                model_setup.load_generalization_dataset(exp_data=self.exp_data, noise=noise, std=std)
         return
 
     def load_model(self):
@@ -76,7 +77,7 @@ class Evaluate:
         state dictionary. Setting the model to use a GPU
         """
         # getting model name given checkpoint
-        if(self.checkpoint<0):
+        if(self.checkpoint < 0):
             model_name = "model_trained"
         else:
             model_name = f"model_epoch_{self.checkpoint}"
