@@ -15,7 +15,6 @@ This repository contains the code for reproducing the results of our ICASSP 2021
  * [5. Contact](#contact)
 
 
-# Codebase still in progress
 
 ## Getting Started
 
